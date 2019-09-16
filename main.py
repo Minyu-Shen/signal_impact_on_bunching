@@ -47,27 +47,31 @@ def get_result(instance_no, has_signal, **kwargs):
 
 
 if __name__ == "__main__":
+    sns.set(color_codes=True)
+    fig, ax = plt.subplots()
+
     examined_signal = int(paras.signal_num / 2)
     g_r = 0.5
     c_l = 120
     o_s = 10
-    instance_no = 100
+    instance_no = 5
     no_signal_arr_means, no_signal_arr_stds = get_result(instance_no, False)
-    signal_arr_means, signal_arr_stds = get_result(instance_no, True, green_ratio=g_r, cycle_length=c_l, off_set=o_s, examined_signal=examined_signal)
+    plt.plot(no_signal_arr_means, 'k', linestyle='dotted', label='headway mean - no signal')
+    plt.plot(no_signal_arr_stds, 'k', linestyle='solid', label='headway std - no signal')
 
+    colors = ['r','g','b','y']
+    for index, c_l in enumerate([100, 140, 180, 220]):
+        signal_arr_means, signal_arr_stds = get_result(instance_no, True, green_ratio=g_r, cycle_length=c_l, off_set=o_s, examined_signal=examined_signal)
+        mean_lg_label = 'headway mean, cycle = ' + str(c_l) + ' sec'
+        std_lg_label = 'headway std, cycle = ' + str(c_l) + ' sec'
+        plt.plot(signal_arr_means, colors[index], linestyle='dotted', label=mean_lg_label)
+        plt.plot(signal_arr_stds, colors[index], linestyle='solid', label=None)
 
-# legs = []
-# legs.append('stop=' + str(stop) + ', mean=' + str(arr_mean) + ', std=' + str(arr_std))
-# ax.legend(legs, loc=2, handlelength=3, fontsize=11)
+    # legs = []
+    # legs.append('stop=' + str(stop) + ', mean=' + str(arr_mean) + ', std=' + str(arr_std))
+    # ax.legend(legs, loc=2, handlelength=3, fontsize=11)
 
-    sns.set(color_codes=True)
-    fig, ax = plt.subplots()
-    plt.plot(no_signal_arr_means, 'b', linestyle='solid', label='headway mean - no signal')
-    plt.plot(no_signal_arr_stds, 'b', linestyle='dotted', label='headway std - no signal')
-
-    plt.plot(signal_arr_means, 'r', linestyle='solid', label='headway mean - signal')
-    plt.plot(signal_arr_stds, 'r', linestyle='dotted', label='headway std - signal')
-
+    
     plt.vlines(examined_signal+0.5, 0, max(no_signal_arr_means), label='signal location')
 
     ax.set_xlabel('stop no.', fontsize=12)
