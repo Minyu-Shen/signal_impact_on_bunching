@@ -87,7 +87,8 @@ class Link:
 
         
     def reset(self):
-        self._sublink_dict = defaultdict(lambda: list) # 'no' -> bus list
         self._sublink_dict[0] = []
+        for sig in range(len(self._signals)):
+            self._sublink_dict[sig+1] = []
         
 

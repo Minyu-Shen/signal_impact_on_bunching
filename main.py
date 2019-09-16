@@ -16,8 +16,7 @@ def get_result(instance_no, has_signal, **kwargs):
     simulator = Simulator(paras.sim_duration, paras.dspt_times, \
         paras.stop_locs, paras.demand_rates, paras.board_rates, paras.stop_num,\
             paras.link_mean_speeds, paras.link_cv_speeds, paras.link_lengths, paras.link_start_locs, \
-                paras.cycle_lengths, paras.green_ratios,\
-                    paras.signal_offsets, paras.signal_locs)
+                paras.cycle_lengths, paras.green_ratios,paras.signal_offsets, paras.signal_locs)
 
     stop_headways = defaultdict(lambda: list) # stop_no -> headways
     for stop in range(paras.stop_num):
@@ -33,8 +32,8 @@ def get_result(instance_no, has_signal, **kwargs):
             arr_hdws_list = simulator.get_stop_headways(stop)
             stop_headways[stop] += arr_hdws_list
 
-        # if sim_r == instance_no-1:
-            # simulator.plot_time_space()
+        if sim_r == instance_no-1:
+            simulator.plot_time_space()
         simulator.reset(paras.dspt_times)
 
     arr_means = []
@@ -50,22 +49,22 @@ if __name__ == "__main__":
     sns.set(color_codes=True)
     fig, ax = plt.subplots()
 
-    examined_signal = int(paras.signal_num / 2)
+    examined_signal = int(paras.signal_num / 2) - 5
     g_r = 0.5
     c_l = 120
-    o_s = 10
-    instance_no = 5
-    no_signal_arr_means, no_signal_arr_stds = get_result(instance_no, False)
-    plt.plot(no_signal_arr_means, 'k', linestyle='dotted', label='headway mean - no signal')
-    plt.plot(no_signal_arr_stds, 'k', linestyle='solid', label='headway std - no signal')
+    o_s = 0
+    instance_no = 2
+    # no_signal_arr_means, no_signal_arr_stds = get_result(instance_no, False)
+    # plt.plot(no_signal_arr_means, 'k', linestyle='solid', label='headway mean - no signal')
+    # plt.plot(no_signal_arr_stds, 'k', linestyle='dotted', label='headway std - no signal')
 
     colors = ['r','g','b','y']
-    for index, c_l in enumerate([100, 140, 180, 220]):
+    for index, c_l in enumerate([80,160,240]):
         signal_arr_means, signal_arr_stds = get_result(instance_no, True, green_ratio=g_r, cycle_length=c_l, off_set=o_s, examined_signal=examined_signal)
         mean_lg_label = 'headway mean, cycle = ' + str(c_l) + ' sec'
         std_lg_label = 'headway std, cycle = ' + str(c_l) + ' sec'
-        plt.plot(signal_arr_means, colors[index], linestyle='dotted', label=mean_lg_label)
-        plt.plot(signal_arr_stds, colors[index], linestyle='solid', label=None)
+        plt.plot(signal_arr_means, colors[index], linestyle='solid', label=mean_lg_label)
+        plt.plot(signal_arr_stds, colors[index], linestyle='dotted', label=None)
 
     # legs = []
     # legs.append('stop=' + str(stop) + ', mean=' + str(arr_mean) + ', std=' + str(arr_std))

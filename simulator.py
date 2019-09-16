@@ -26,7 +26,6 @@ class Simulator(object):
         self._signal_offsets = signal_offsets
         self._signal_locs = signal_locs
         self._stop_num = stop_num
-        
 
         # current simulation time
         self._curr_time = 0.0
