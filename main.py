@@ -33,7 +33,7 @@ def get_result(batch_no, delta_t, sim_duration, dspt_times, \
             arr_hdws_list = simulator.get_stop_headways(stop)
             stop_headways[stop] += arr_hdws_list
 
-        # if sim_r == instance_no-1:
+        # if sim_r == batch_no-1:
             # simulator.plot_time_space()
         simulator.reset(dspt_times)
     
@@ -86,26 +86,47 @@ def one_instance(**kwargs):
 
 if __name__ == "__main__":
     
+    ###### for plotting time-space diagram
+    # delta_t, sim_duration, dspt_times, \
+    # stop_locs, demand_rates, board_rates, stop_num, \
+    # link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
+    # cycle_lengths, green_ratios, signal_offsets, signal_locs, examined_signal \
+    # = get_parameters(cycle_length=120, green_ratio=0.6, off_set=0)
+    
+    # print(green_ratios)
+
+    # get_result(2, delta_t, sim_duration, dspt_times, \
+    # stop_locs, demand_rates, board_rates, stop_num, \
+    # link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
+    # cycle_lengths, green_ratios, signal_offsets, signal_locs)
+
+
     instance_no = 4
     process_num = 2
     batch_no = int(instance_no / process_num)
 
 
     ##### signal_cases ##### 
-    c_ls = [80,140]
-    o_s = 10
-    g_r = 0.5
+    # c_ls = [80,160,240]
+    c_ls = [160]
+    o_ss = [0,30,60]
+    # o_ss = [30]
+    # g_rs = [0.3,0.5,0.7]
+    g_rs = [0.5]
     total_hdws_dict = Manager().dict()
-    signal_mean_c_ls = defaultdict(lambda: list)
-    signal_std_c_ls = defaultdict(lambda: list)
+    signal_mean_factors = defaultdict(lambda: list)
+    signal_std_factors = defaultdict(lambda: list)
     for c_l in c_ls:
-        arr_means, arr_stds = one_instance(c_l=c_l, g_r=g_r, o_s=o_s)
-        signal_mean_c_ls[c_l] = arr_means
-        signal_std_c_ls[c_l] = arr_stds
+        for o_s in o_ss:
+            for g_r in g_rs:
+                if len(c_ls) > 1: factor=c_l
+                if len(o_ss) > 1: factor=o_s
+                arr_means, arr_stds = one_instance(c_l=c_l, g_r=g_r, o_s=o_s)
+                signal_mean_factors[factor] = arr_means
+                signal_std_factors[factor] = arr_stds
 
-    print(signal_mean_c_ls[80])
 
-    ##### no_signal_cases ##### 
+    ##### no_signal_cases #####
     no_sig_means, no_sig_stds = one_instance()
     
     ### plotting
@@ -114,11 +135,11 @@ if __name__ == "__main__":
     plt.plot(no_sig_stds, 'k', linestyle='dotted', label='headway std - no signal')
 
     colors = ['r','g','b','y']
-    for index, c_l in enumerate(c_ls):
-        plt.plot(signal_mean_c_ls[c_l], colors[index], linestyle='solid', label=None)
-        plt.plot(signal_std_c_ls[c_l], colors[index], linestyle='dotted', label='cl=' + str(c_l))
+    for index, factor in enumerate(o_ss): # change!!!
+        plt.plot(signal_mean_factors[factor], colors[index], linestyle='solid', label=None)
+        plt.plot(signal_std_factors[factor], colors[index], linestyle='dotted', label='os=' + str(factor)) #change!!
 
-    plt.vlines(5+0.5, 0, max(signal_mean_c_ls[c_ls[0]]), label='signal location')
+    plt.vlines(5-0.5, 0, max(signal_mean_factors[o_ss[0]]), label='signal location') # change!!
     ax.set_xlabel('stop no.', fontsize=12)
     ax.set_ylabel('(sec) ', fontsize=12)
     ax.legend()
