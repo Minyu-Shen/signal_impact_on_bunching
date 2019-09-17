@@ -49,7 +49,9 @@ class Stop:
         self._bus_list.append(bus)
         if len(self._bus_list) >= 2: # bunched!
             return True
-        self.arr_times.append(curr_time)
+        
+        if bus.is_counted:
+            self.arr_times.append(curr_time)
         # if self.stop_id == 4:
         #     print(self.arr_times)
 

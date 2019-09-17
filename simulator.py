@@ -80,6 +80,7 @@ class Simulator(object):
         for bs in range(n-1):
             enter_link_no = (bs+1) * m
             bus = Bus(self._total_bus, self._stop_num)
+            bus.is_counted = False
             self._total_bus += 1
             self._link_list[enter_link_no].enter_bus(bus, 0)
             self._total_bus_list.append(bus)
@@ -158,9 +159,6 @@ class Simulator(object):
             link.reset()
             stop.reset()
             signal.reset()
-
-    def get_mean_std(self, headways):
-        return np.around(np.mean(headways), decimals=1), np.around(np.std(headways), decimals=1)
 
 if __name__ == "__main__":
     pass

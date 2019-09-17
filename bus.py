@@ -18,6 +18,7 @@ class Bus(object):
         self.prev_arr_times = defaultdict(float)
 
         self.travel_speed_this_link = None
+        self.is_counted = True
 
     def get_obs(self):
         pass
