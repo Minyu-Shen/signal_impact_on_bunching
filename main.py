@@ -10,12 +10,12 @@ import parameters
 
 
 def get_result(batch_no, delta_t, sim_duration, dspt_times, \
-        stop_locs, demand_rates, board_rates, stop_num, \
+        stop_locs, demand_rates, board_rates, stop_num, demand_start_times, \
             link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
                 cycle_lengths, green_ratios, signal_offsets, signal_locs):
     
     simulator = Simulator(sim_duration, dspt_times, \
-        stop_locs, demand_rates, board_rates, stop_num,\
+        stop_locs, demand_rates, board_rates, stop_num, demand_start_times, \
             link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
                 cycle_lengths, green_ratios, signal_offsets, signal_locs)
 
@@ -24,7 +24,6 @@ def get_result(batch_no, delta_t, sim_duration, dspt_times, \
         stop_headways[stop] = []
 
     for sim_r in range(batch_no):
-        simulator.distribute_initial_buses()
         for t in range(sim_duration):
             is_bunched = simulator.move_one_step(delta_t)
             if is_bunched: break
@@ -50,13 +49,13 @@ def one_instance(**kwargs):
         g_r = kwargs['g_r']
         o_s = kwargs['o_s']
         delta_t, sim_duration, dspt_times, \
-        stop_locs, demand_rates, board_rates, stop_num, \
+        stop_locs, demand_rates, board_rates, stop_num, demand_start_times, \
         link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
         cycle_lengths, green_ratios, signal_offsets, signal_locs, examined_signal \
         = get_parameters(cycle_length=c_l, green_ratio=g_r, off_set=o_s)
     else:
         delta_t, sim_duration, dspt_times, \
-        stop_locs, demand_rates, board_rates, stop_num, \
+        stop_locs, demand_rates, board_rates, stop_num, demand_start_times, \
         link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
         cycle_lengths, green_ratios, signal_offsets, signal_locs, examined_signal \
         = get_parameters()
@@ -67,7 +66,7 @@ def one_instance(**kwargs):
     processes = []
     for i in range(process_num):
         process = Process(target=get_result, args=(batch_no, delta_t, sim_duration, dspt_times, \
-            stop_locs, demand_rates, board_rates, stop_num, \
+            stop_locs, demand_rates, board_rates, stop_num, demand_start_times, \
                 link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
                     cycle_lengths, green_ratios, signal_offsets, signal_locs, ))
         process.start()
@@ -101,7 +100,7 @@ if __name__ == "__main__":
     # cycle_lengths, green_ratios, signal_offsets, signal_locs)
 
 
-    instance_no = 4
+    instance_no = 20
     process_num = 2
     batch_no = int(instance_no / process_num)
 
@@ -144,7 +143,6 @@ if __name__ == "__main__":
     ax.set_ylabel('(sec) ', fontsize=12)
     ax.legend()
     plt.show()
-
 
 
 

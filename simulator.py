@@ -6,10 +6,11 @@ from intersection import Signal
 from collections import defaultdict
 from copy import deepcopy
 import matplotlib.pyplot as plt
+from parameters import get_parameters
 
 class Simulator(object):
     def __init__(self, sim_duration, dspt_times, \
-        stop_locs, demand_rates, board_rates, stop_num, \
+        stop_locs, demand_rates, board_rates, stop_num, demand_start_times, \
             link_mean_speeds, link_cv_speeds, link_lengths, link_start_locs, \
                 cycle_lengths, green_ratios, signal_offsets, signal_locs):
 
@@ -17,6 +18,7 @@ class Simulator(object):
         self._stop_locs = stop_locs
         self._demand_rates = demand_rates
         self._board_rates = board_rates
+        self._demand_start_times = demand_start_times
         self._link_mean_speeds = link_mean_speeds
         self._link_cv_speeds = link_cv_speeds
         self._link_lengths = link_lengths
@@ -42,9 +44,9 @@ class Simulator(object):
         # unchangable ...
         ### init stops
         self._stop_list = []
-        for index, (loc, demand_rate, self._board_rates) in \
-                enumerate(zip(self._stop_locs, self._demand_rates, self._board_rates)):
-            stop = Stop(index, loc, demand_rate, self._board_rates)
+        for index, (loc, demand_rate, board_rate, demand_start_time) in \
+                enumerate(zip(self._stop_locs, self._demand_rates, self._board_rates, self._demand_start_times)):
+            stop = Stop(index, loc, demand_rate, board_rate, demand_start_time)
             self._stop_list.append(stop)
         ### init links
         self._link_list = []
@@ -162,7 +164,3 @@ class Simulator(object):
 
 if __name__ == "__main__":
     pass
-    
-    
-
-    

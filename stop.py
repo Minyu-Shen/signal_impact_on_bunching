@@ -2,7 +2,7 @@ import numpy as np
 from collections import defaultdict
 
 class Stop:
-    def __init__(self, stop_id, loc, demand_rate, board_rate):
+    def __init__(self, stop_id, loc, demand_rate, board_rate, demand_start_time):
         """Init method.
 
         init method for Link 
@@ -21,6 +21,7 @@ class Stop:
         self.stop_id = stop_id
         self._loc = loc
         self._demand_rate = demand_rate
+        self._demand_start_time = demand_start_time
         self._board_rate = board_rate
         self._next_link = None
 
@@ -57,12 +58,13 @@ class Stop:
 
 
     def operation(self, delta_t, curr_time):
-        self._pax_arrive()
+        self._pax_arrive(curr_time)
         self._boarding(delta_t)
         self._leaving(curr_time)
 
-    def _pax_arrive(self):
-        self._pax_queue += np.random.poisson(self._demand_rate)
+    def _pax_arrive(self, curr_time):
+        if self._demand_start_time <= curr_time:
+            self._pax_queue += np.random.poisson(self._demand_rate)
 
     def _boarding(self, delta_t):
         for bus in self._bus_list:
